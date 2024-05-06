@@ -9,7 +9,7 @@ This Python package is for calculating Christoffel Symbols and tensors (i.e., Ri
 ## Table of Contents
 
 1. [Installation](#installtion)
-2. This package comes with a Graphical User Interface (GUI) which is user friendly and helps save time in learning to use the software [Christoffel Symbols Calculator frontend](https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator-frontend) repository.
+2. This package comes with a Graphical User Interface (GUI) [Christoffel Symbols Calculator frontend](https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator-frontend) repository.
 3. [Known issues](#known-issues)
 4. [Roadmap](#roadmap)
 5. [Questions, Issues, Suggestions, and Other Feedback](#questions-issues)
