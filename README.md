@@ -49,6 +49,6 @@ Here are some future plans for the Christoffel Symbols Calculator:
 
 ## Questions
 
-If you have any feedback, suggestions, or new ideas on how to improve the software, plaese feel free to reach out to me through email ([dhananjhay03@gmail.com][mailto:dhananjhay03@gmail.com]) or the [discussion page](https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator/discussions).
+If you have any feedback, suggestions, or new ideas on how to improve the software, plaese feel free to reach out to me through email ([dhananjhay03@gmail.com](mailto:dhananjhay03@gmail.com)) or the [discussion page](https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator/discussions).
 
 
