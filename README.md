@@ -16,13 +16,13 @@ This Python package is for calculating Christoffel Symbols and tensors (i.e., Ri
 
 ## Installation
 
-- Option 1 [Pip install]
+- Option 1 (Pip install)
 
 ```bash
 pip install git+https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator.git
 ```
 
-- Option 2 [Clone the repository]
+- Option 2 (Clone the repository)
 
 ```bash
 git clone https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator.git
