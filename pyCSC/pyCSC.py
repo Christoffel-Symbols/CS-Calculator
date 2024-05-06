@@ -15,7 +15,7 @@ init_printing()
 
 class PyCSC:
     """
-    PyNGRC is a class that calculates the following from a metric tensor:
+    PyCSC is a class that calculates the following from a metric tensor:
         - Non-zero components of Christoffel Symbols (first kind)
         - Christoffel Symbols of second kind
         - Non-zero components of Riemann Tensor
@@ -27,7 +27,7 @@ class PyCSC:
 
     def __init__(self, num_coordinates):
         """
-        Create a PyNGRC instance.
+        Create a PyCSC instance.
 
         Parameters
         ----------
@@ -47,7 +47,7 @@ class PyCSC:
             
             variables_dict :: dict
               Mapping variable parameters (i.e., alpha, delta, epsilon) to the values
-              specified in the `variables_values` parameter in `PyNGRC.metric_tensor()`.
+              specified in the `variables_values` parameter in `PyCSC.metric_tensor()`.
             
             metric :: `sympy.matrices.dense.MutableDenseMatrix`
               Metric tensor used for computing Christoffel Symbols. Components can 
@@ -70,7 +70,7 @@ class PyCSC:
 
         Returns
         -------
-            `PyNGRC` instance
+            `PyCSC` instance
         
         """
 
@@ -115,7 +115,7 @@ class PyCSC:
         Parameters
         ----------
             matrix :: str
-              A matrix with dimensions [`PyNGRC.num_coordiantes`,`PyNGRC.num_coordiantes`] 
+              A matrix with dimensions [`PyCSC.num_coordiantes`,`PyCSC.num_coordiantes`] 
               that represents the components of the metric tensor.
     
             variable_values :: list of str
@@ -133,7 +133,7 @@ class PyCSC:
 
             variables_dict :: dict
               Mapping variable parameters (i.e., alpha, delta, epsilon) to the values
-              specified in the `variables_values` parameter in `PyNGRC.metric_tensor()`.
+              specified in the `variables_values` parameter in `PyCSC.metric_tensor()`.
 
             contra_metric :: `sympy.matrices.dense.MutableDenseMatrix`
               Inverse of the metric tensor.
@@ -249,7 +249,7 @@ class PyCSC:
         # Check if the metric is there or not
         if self.metric == None:
             raise ValueError(
-                'Please specify the metric tensor using `PyNGRC.metric_tensor()`' +
+                'Please specify the metric tensor using `PyCSC.metric_tensor()`' +
                 ' before calculating Christoffel Symbols of first kind.'
             )
         
@@ -292,7 +292,7 @@ class PyCSC:
         # Check pre-requisites
         if self.metric == None:
             raise ValueError(
-                'Please specify the metric tensor using `PyNGRC.metric_tensor()`' +
+                'Please specify the metric tensor using `PyCSC.metric_tensor()`' +
                 ' before calculating Christoffel Symbols of first kind.'
             )
 
