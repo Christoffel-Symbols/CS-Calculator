@@ -4,7 +4,7 @@ All rights reserved 2024-25.
 
 **This package is actively under development**
 
-This Python package is for calculating Christoffel Symbols and tensors (i.e., Riemann Tensor, Ricci Tensor etcetera) that are helpful in doing gravitational and relativistic astrophysics. With time, the package is expected to mature, both in terms of efficiency and functionality.
+This Python package is for calculating Christoffel Symbols and tensors (i.e., Riemann Tensor, Ricci Tensor, etcetera) that are helpful in doing gravitational and relativistic astrophysics. With time, the package is expected to mature, both in terms of efficiency and functionality.
 
 ## Table of Contents
 
