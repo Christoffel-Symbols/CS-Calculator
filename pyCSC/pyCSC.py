@@ -1,5 +1,5 @@
 """
-Py-Numerical General Relativity Calculator
+Py-Christoffel Symbols Calculator
 
 """
 
@@ -13,7 +13,7 @@ from IPython.display import display, Math
 init_printing()
 
 
-class PyNGRC:
+class PyCSC:
     """
     PyNGRC is a class that calculates the following from a metric tensor:
         - Non-zero components of Christoffel Symbols (first kind)
