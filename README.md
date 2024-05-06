@@ -40,7 +40,7 @@ python setup.py install
 ```
 
 ## Known Issues
-- Allow users to use more variable parameters, i.e., p(t) : pressure as a function of time.
+- Allow users to include more variable parameters, i.e., p(t) : pressure as a function of time, in the metric tensor.
 
 ## Roadmap
 
