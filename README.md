@@ -41,6 +41,8 @@ python setup.py install
 
 ## Known Issues
 - Allow users to include more variable parameters, i.e., p(t) : pressure as a function of time, in the metric tensor.
+- Right now only trigonometric expressions (i.e., sin and cos) are understood by the software, need to increase the mathematical
+expressions that the software can understand (i.e., inverse trigonometric functions, logarithms, and etcetera).
 
 ## Roadmap
 
