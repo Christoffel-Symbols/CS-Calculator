@@ -42,7 +42,8 @@ python setup.py install
 ## Known Issues
 - Allow users to include more variable parameters, i.e., p(t) : pressure as a function of time, in the metric tensor.
 - Right now only trigonometric expressions (i.e., sin and cos) are understood by the software, need to incorporate
-more mathematical expressions (i.e., inverse trigonometric functions, logarithms, and etcetera).
+more mathematical expressions (i.e., inverse trigonometric functions, logarithms, e as an exponent, and etcetera).
+- Develop a parser that can render pythonnic mathematical expression to latex in real-time.
 
 ## Roadmap
 
