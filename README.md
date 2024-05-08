@@ -33,6 +33,7 @@ After cloning the repository, run the following command in the Christoffel-Symbo
 ```bash
 pip install .
 ```
+
 or
 
 ```bash
@@ -40,18 +41,15 @@ python setup.py install
 ```
 
 ## Known Issues
-- Allow users to include more variable parameters, i.e., p(t) : pressure as a function of time, in the metric tensor.
-- Right now only trigonometric expressions (i.e., sin and cos) are understood by the software, need to incorporate
-more mathematical expressions (i.e., inverse trigonometric functions, logarithms, e as an exponent, and etcetera).
-- Develop a parser that can render pythonnic mathematical expression to latex in real-time.
+
+- Develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
 
 ## Roadmap
 
 Here are some future plans for the Christoffel Symbols Calculator:
+
 - Include electromagnetism tensor to describe electromagnetic field in spacetime.
 
 ## Questions
 
 If you have any feedback, suggestions, or new ideas on how to improve the software, plaese feel free to reach out to me through email ([dhananjhay03@gmail.com](mailto:dhananjhay03@gmail.com)) or the [discussion page](https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator/discussions).
-
-
