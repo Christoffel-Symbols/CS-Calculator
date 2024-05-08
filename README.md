@@ -42,7 +42,7 @@ python setup.py install
 
 ## Known Issues
 
-- Develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
+- Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
 
 ## Roadmap
 
