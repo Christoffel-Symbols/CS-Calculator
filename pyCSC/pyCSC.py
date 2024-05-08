@@ -6,7 +6,10 @@ Py-Christoffel Symbols Calculator
 import sympy as sym
 from sympy import init_printing
 from sympy import Matrix
-from sympy import sin, cos
+from sympy import sin, cos, csc, sec, tan, cot, asin, acsc, acos, asec, atan, acot, atan2, sinc
+from sympy import sinh, cosh, tanh, coth, sech, csch, asinh, acosh, atanh, acoth, asech, acsch
+from sympy import log, ln
+from sympy import E as e
 from sympy import Function
 from sympy.physics.mechanics import init_vprinting
 from IPython.display import display, Math
@@ -88,13 +91,13 @@ class PyCSC:
             )
 
         if num_coordinates == 2:
-            x,y = sym.symbols('x y')
+            x,y = sym.symbols('x y', real=True)
             self.coordinate_list = [x,y]
         elif num_coordinates == 3:
-            x,y,z = sym.symbols('x y z')
+            x,y,z = sym.symbols('x y z', real=True)
             self.coordinate_list = [x,y,z]
         else:
-            t,x,y,z = sym.symbols('t x y z')
+            t,x,y,z = sym.symbols('t x y z', real=True)
             self.coordinate_list = [t,x,y,z]
 
         self.variables_dict = dict() 
@@ -108,7 +111,7 @@ class PyCSC:
         self.ricci_tensor = None
         self.ricci_scalar = 0
 
-    def metric_tensor(self, matrix, variable_values=[], scale_factor=False):
+    def metric_tensor(self, matrix, variable_values=[], scale_factor=False, pressure=False, density=False):
         """
         Metric tensor.
 
@@ -123,6 +126,12 @@ class PyCSC:
 
             scale_factor :: Boolean
               If True, reserve 'a' `sympy.symbols` for scale factor a(t).
+
+            pressure :: Boolean
+              If True, reserve 'p' `sympy.symbols` for pressure as a function of time p(t).
+
+            density :: Boolean
+              If True, reserve 'P' `sympy.symbols` for density as a function of time P(t).
             
 
         Attributes
@@ -162,6 +171,16 @@ class PyCSC:
             raise TypeError(
                 'scale_factor must be a boolean type (i.e., True or False)'
             )
+        
+        if not isinstance(pressure, bool):
+            raise TypeError(
+                'pressure must be a boolean type (i.e., True or False)'
+            )
+        
+        if not isinstance(density, bool):
+            raise TypeError(
+                'density must be a boolean type (i.e., True or False)'
+            )
 
         if isinstance(variable_values, list):
             if len(variable_values) > 3:
@@ -185,7 +204,19 @@ class PyCSC:
             variables_list.append(sym.symbols('a'))
             t = sym.symbols("t")
             a = Function("a")(t)
-            self.variables_dict[str(sym.symbols('a'))] = a
+            self.variables_dict['a'] = a
+        
+        if pressure:
+            variables_list.append(sym.symbols('p'))
+            t = sym.symbols("t")
+            p = Function("p")(t)
+            self.variables_dict['p'] = p
+
+        if density:
+            variables_list.append(sym.symbols('P'))
+            t = sym.symbols("t")
+            P = Function("P")(t)
+            self.variables_dict['P'] = P
             
 
         num_variables = 0        
@@ -210,8 +241,12 @@ class PyCSC:
 
         if scale_factor:
             num_variables += 1
+        if pressure:
+            num_variables += 1
+        if density:
+            num_variables += 1
 
-        if variable_values or scale_factor:
+        if variable_values or scale_factor or pressure or density:
             for i in range(self.num_coordinates):
                 for j in range(self.num_coordinates):
                     for k in range(num_variables):
