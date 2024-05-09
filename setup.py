@@ -37,7 +37,7 @@ Contact: dhananjhay03@gmail.com
 
 """
 
-from setup import setup
+from setuptools import setup
 
 long_description = __doc__.strip()
 
