@@ -43,6 +43,10 @@ python setup.py install
 ## Known Issues
 
 - Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
+- Need to validate matrix elements before submitting a request.
+- Put a restriction on sending a zero n-dimensional matrix.
+- Incoporate latex style text when filling out the metric tensor.
+- Remove `real` parameter when generating symbols using `sympy.core.symbols.Symbol` and run tests (scale factor 'at(t)' is causing an issue).
 
 ## Roadmap
 
