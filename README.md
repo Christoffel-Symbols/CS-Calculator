@@ -46,7 +46,6 @@ python setup.py install
 - Need to validate matrix elements before submitting a request.
 - Put a restriction on sending a zero n-dimensional matrix.
 - Catch the error when contravariant metric tensor cannot be computed.
-- Incoporate latex style text when filling out the metric tensor.
 - Remove `real` parameter when generating symbols using `sympy.core.symbols.Symbol` and run tests (scale factor 'at(t)' is causing an issue).
 - `alpha`, `delta`, and `epsilon` reserved parameters don't work when a request is sent from the Graphical UI.
 
