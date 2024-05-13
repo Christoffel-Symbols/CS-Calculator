@@ -47,10 +47,10 @@ python setup.py install
 - Reset button should reset everything.
 - change examples radio button to buttons
 - Software calculates sends 0 components of the Riemann tensor
-- For Kerr space-time, riemann tensor takes a long time to calculate. We should allow users to select extra stuff that they want.
 - Time out error in case calculation takes a long time; should be implemented in the frontend.
 - Warning symbol to use python mathematical operators.
 - What is a user uses delta instead of alpha
+- Make changes to PyCSC according to notebook version.
 
 ## Roadmap
 
