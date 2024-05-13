@@ -43,8 +43,11 @@ python setup.py install
 ## Known Issues
 
 - Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
-- Catch the error when contravariant metric tensor cannot be computed.
-- `alpha`, `delta`, and `epsilon` reserved parameters don't work when a request is sent from the Graphical UI.
+- Need to update css to fit large metric tensors. (both in results and input metric tensors)
+- Reset button should reset everything.
+- Software calculates sends 0 components of the Riemann tensor
+- For Kerr space-time, riemann tensor takes a long time to calculate. We should allow users to select extra stuff that they want.
+- Time out error in case calculation takes a long time; should be implemented in the frontend.
 
 ## Roadmap
 
