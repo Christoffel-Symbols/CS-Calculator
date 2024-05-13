@@ -48,7 +48,6 @@ python setup.py install
 - Time out error in case calculation takes a long time; should be implemented in the frontend.
 - Warning symbol to use python mathematical operators.
 - What is a user uses delta instead of alpha
-- Make changes to PyCSC according to notebook version.
 - Change design according to onlyCS option.
 
 ## Roadmap
