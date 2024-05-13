@@ -49,6 +49,7 @@ python setup.py install
 - Warning symbol to use python mathematical operators.
 - What is a user uses delta instead of alpha
 - Make changes to PyCSC according to notebook version.
+- Change design according to onlyCS option.
 
 ## Roadmap
 
