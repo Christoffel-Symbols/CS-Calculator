@@ -19,8 +19,8 @@ init_printing()
 class PyCSC:
     """
     PyCSC is a class that calculates the following from a metric tensor:
-        - Non-zero components of Christoffel Symbols (first kind)
-        - Christoffel Symbols of second kind
+        - Christoffel Symbols Second kind
+        - Non-zero components of Christoffel Symbols First kind
         - Non-zero components of Riemann Tensor
         - Ricci Tensor
         - Ricci Scalar
@@ -61,6 +61,9 @@ class PyCSC:
 
             riemann_dict :: dict
               Non-zero components of the Riemannian tensor.
+
+            christoffel_fk :: dict
+              Non-zero components of Christoffel Symbols First kind.
             
             christoffel_sk :: list of `sympy.matrices.dense.MutableDenseMatrix`
               Christoffel Symbols of second kind.
@@ -91,13 +94,13 @@ class PyCSC:
             )
 
         if num_coordinates == 2:
-            x,y = sym.symbols('x y', real=True)
+            x,y = sym.symbols('x y')
             self.coordinate_list = [x,y]
         elif num_coordinates == 3:
-            x,y,z = sym.symbols('x y z', real=True)
+            x,y,z = sym.symbols('x y z')
             self.coordinate_list = [x,y,z]
         else:
-            t,x,y,z = sym.symbols('t x y z', real=True)
+            t,x,y,z = sym.symbols('t x y z')
             self.coordinate_list = [t,x,y,z]
 
         self.variables_dict = dict() 
@@ -107,11 +110,12 @@ class PyCSC:
 
         # Intializing the output
         self.christoffel_sk = []
-        self.riemann_dict = dict()
+        self.riemann_dict = None
+        self.christoffel_fk = None
         self.ricci_tensor = None
         self.ricci_scalar = 0
 
-    def metric_tensor(self, matrix, variable_values=[], scale_factor=False, pressure=False, density=False):
+    def metric_tensor(self, matrix, variable_values={}, scale_factor=False, pressure=False, density=False):
         """
         Metric tensor.
 
@@ -121,17 +125,17 @@ class PyCSC:
               A matrix with dimensions [`PyCSC.num_coordiantes`,`PyCSC.num_coordiantes`] 
               that represents the components of the metric tensor.
     
-            variable_values :: list of str
-              Variable parameters' functional definitions.
+            variable_values :: dict()
+              Variable parameters that will be substituted into the ,metric tensor before calculating christoffel symbols.
 
             scale_factor :: Boolean
-              If True, reserve 'a' `sympy.symbols` for scale factor a(t).
+              If True, reserve 'a' `sympy.core.symbols.Symbol` for scale factor a(t).
 
             pressure :: Boolean
-              If True, reserve 'p' `sympy.symbols` for pressure as a function of time p(t).
+              If True, reserve 'p' `sympy.core.symbols.Symbol` for pressure as a function of time p(t).
 
             density :: Boolean
-              If True, reserve 'P' `sympy.symbols` for density as a function of time P(t).
+              If True, reserve 'P' `sympy.core.symbols.Symbol` for density as a function of time P(t).
             
 
         Attributes
@@ -156,7 +160,7 @@ class PyCSC:
         # Check input
         if isinstance(matrix, str):
            if Matrix(sym.parsing.sympy_parser.parse_expr(matrix)).shape == (self.num_coordinates,self.num_coordinates):
-               self.metric = sym.parsing.sympy_parser.parse_expr(matrix)
+               self.metric = sym.parsing.sympy_parser.parse_expr(matrix, locals())
            else:
                raise ValueError(
                    f" `matrix` shape must be ({self.num_coordinates},{self.num_coordinates})"
@@ -182,76 +186,77 @@ class PyCSC:
                 'density must be a boolean type (i.e., True or False)'
             )
 
-        if isinstance(variable_values, list):
+        allowed_keys = ['alpha', 'delta', 'epsilon']
+        if not isinstance(variable_values, dict):
+            raise TypeError(
+                "'variable_values' must be Type `dict` with three distinct keys: 'alpha', 'delta' and 'epsilon'"
+            )
+        else:
             if len(variable_values) > 3:
                 raise ValueError(
                     'Maximum number of 3 variable parameters are allowed.'
                 )
-            for value in variable_values:
-                if not isinstance(value, str):
-                    raise TypeError(
-                        'Function expressions should be inside a string'
-                    )
+            
+            if len(variable_values) !=0:
 
-        variables_list = []
-        
+                for key in variable_values:
+                    if key not in allowed_keys:
+                        raise ValueError(
+                            "Allowed keys in the parameter 'variable_values' are 'alpha', 'delta', 'epsilon'"
+                        )
+                    
+                    if not isinstance(variable_values[key], str):
+                        raise TypeError(
+                            "Value for each key in the parameter 'variable_values' should be a mathematical expression inside a string (i.e., variable_values = {'alpha': 'x**2 + 2'})"
+                        )
+                    if not variable_values[key]:
+                        raise ValueError(
+                            "Value for each key in the parameter 'variable_values' cannot be an empty string."
+                        )        
 
         if scale_factor:
             # this is responsible to visualize time derivatives with dots
             init_vprinting()
             
             # then you need to define x as a functions of time
-            variables_list.append(sym.symbols('a'))
             t = sym.symbols("t")
             a = Function("a")(t)
             self.variables_dict['a'] = a
         
         if pressure:
-            variables_list.append(sym.symbols('p'))
             t = sym.symbols("t")
             p = Function("p")(t)
             self.variables_dict['p'] = p
 
         if density:
-            variables_list.append(sym.symbols('P'))
             t = sym.symbols("t")
             P = Function("P")(t)
             self.variables_dict['P'] = P
-            
-
-        num_variables = 0        
+                 
         # substitute variables' definition into the metric tensor
-        if variable_values:
-            num_variables = len(variable_values)
-            if num_variables == 1:
-                alpha = sym.symbols('alpha')
-                variables_list.append(alpha)
-                self.variables_dict[str(alpha)] = sym.parsing.sympy_parser.parse_expr(variable_values[0])
-            elif num_variables == 2:
-                alpha, delta = sym.symbols('alpha delta')
-                variables_list.append(alpha, delta)
-                self.variables_dict[str(alpha)] = sym.parsing.sympy_parser.parse_expr(variable_values[0])
-                self.variables_dict[str(delta)] =  sym.parsing.sympy_parser.parse_expr(variable_values[1])
-            else:
-                alpha, delta, epsilon  = sym.symbols('alpha delta epsilon')
-                variables_list.append(alpha, delta, epsilon)
-                self.variables_dict[str(alpha)] = sym.parsing.sympy_parser.parse_expr(variable_values[0])
-                self.variables_dict[str(delta)] = sym.parsing.sympy_parser.parse_expr(variable_values[1])
-                self.variables_dict[str(epsilon)] = sym.parsing.sympy_parser.parse_expr(variable_values[2])
+        if 'alpha' in variable_values.keys():
+            alpha = sym.symbols('alpha')
+            self.variables_dict[alpha] = sym.parsing.sympy_parser.parse_expr(variable_values['alpha'])
+            
+        if 'delta' in variable_values.keys():
+            delta = sym.symbols('delta')
+            self.variables_dict[delta] = sym.parsing.sympy_parser.parse_expr(variable_values['delta'])
+            
+        if 'epsilon' in variable_values.keys():
+            epsilon = sym.symbols('epsilon')
+            self.variables_dict[epsilon] = sym.parsing.sympy_parser.parse_expr(variable_values['epsilon'])
 
-        if scale_factor:
-            num_variables += 1
-        if pressure:
-            num_variables += 1
-        if density:
-            num_variables += 1
-
-        if variable_values or scale_factor or pressure or density:
-            for i in range(self.num_coordinates):
-                for j in range(self.num_coordinates):
-                    for k in range(num_variables):
-                        self.metric[i][j] = self.metric[i][j].subs(variables_list[k], self.variables_dict[str(variables_list[k])])
         
+        for i in range(self.num_coordinates):
+            for j in range(self.num_coordinates):
+                    if self.metric[i][j] == 0:
+                        pass
+                    else:
+                        try:
+                            self.metric[i][j] = sym.parsing.sympy_parser.parse_expr(self.metric[i][j]).subs(self.variables_dict)
+                        except:
+                            print('could not substitute')
+            
         self.metric = sym.Matrix(self.metric)
         print('Metric Tensor')
         display(self.metric)
@@ -269,11 +274,13 @@ class PyCSC:
 
         Attributes
         ----------
-            None
+            christoffel_fk :: dict
+              Non-zero components of the Christoffel Symbols First kind.
 
         Returns
         -------
             None
+            
         """
 
         if not isinstance(show_symbols, bool):
@@ -288,21 +295,20 @@ class PyCSC:
                 ' before calculating Christoffel Symbols of first kind.'
             )
         
-        Christoffel_fk = dict()
+        self.christoffel_fk = dict()
 
         for a in range(self.num_coordinates):
             for b in range(self.num_coordinates):
                 for c in range(self.num_coordinates):
-                    ans = (1/2) * (self.metric[a,c].diff(self.coordinate_list[b]) + self.metric[b,a].diff(self.coordinate_list[c]) - self.metric[b,c].diff(self.coordinate_list[a]))
-                    if ans != 0:
-                        Christoffel_fk[str(a) + str(b) + str(c)] = sym.simplify(ans)
+                    ans = (1/2) * (self.metric[a,c].diff(self.coordinate_list[b]) + self.metric[b,c].diff(self.coordinate_list[a]) - self.metric[b,a].diff(self.coordinate_list[c]))
+                    self.christoffel_fk[str(a) + str(b) + str(c)] = sym.simplify(ans)
 
         if show_symbols:    
-            for key in Christoffel_fk:
+            for key in self.christoffel_fk:
                 Gamma = sym.symbols(f'Gamma_{key}')
-                ans = Christoffel_fk[key]
-                display(Math(sym.latex(Gamma) + ' = ' + sym.latex(ans)))
-
+                ans = self.christoffel_fk[key]
+                if ans != 0:
+                    display(Math(sym.latex(Gamma) + ' = ' + sym.latex(ans)))
 
     def calculate_christoffel_symbol(self, show_symbols=True):
         """
@@ -348,7 +354,7 @@ class PyCSC:
                 # Using the torsion free condition to reduce number of iterations.
                 for c in range(b+1):
                     for i in range(self.num_coordinates):
-                        self.christoffel_sk[a][b,c] += sym.simplify((1/2) * self.contra_metric[a,i] * (self.metric[i,c].diff(self.coordinate_list[b]) + self.metric[b,i].diff(self.coordinate_list[c]) - self.metric[b,c].diff(self.coordinate_list[i])))     
+                        self.christoffel_sk[a][b,c] += (1/2) * self.contra_metric[a,i] * (self.metric[i,c].diff(self.coordinate_list[b]) + self.metric[b,i].diff(self.coordinate_list[c]) - self.metric[b,c].diff(self.coordinate_list[i]))
                     if (b == c):
                         pass
                     else:
@@ -392,27 +398,62 @@ class PyCSC:
                 + ' the Riemann Tensor.'
             )
         
+        if self.christoffel_fk is None:
+            raise ValueError(
+                'Please calculate Christoffel symbols of first kind before calculatint' + 'the Riemann Tensor.'
+            )
+        
+        self.riemann_dict = dict()
+        
         for a in range(self.num_coordinates):
             for b in range(self.num_coordinates):
                 for c in range(self.num_coordinates):
                     for d in range(self.num_coordinates):
+                        key = str(a) + str(b) + str(c) + str(d)
 
-                        summation1 = 0
-                        summation2 = 0
-                        for k in range(self.num_coordinates):
-                            summation1 += self.christoffel_sk[a][c,k]*self.christoffel_sk[k][d,b]
-                            summation2 += self.christoffel_sk[a][d,k]*self.christoffel_sk[k][c,b]
-                
-                        ans = self.christoffel_sk[a][d,b].diff(self.coordinate_list[c]) - self.christoffel_sk[a][c,b].diff(self.coordinate_list[d]) + summation1 - summation2
-                        
-                        if ans != 0:
-                            self.riemann_dict[str(a)+str(b)+str(c)+str(d)] = sym.simplify(ans)
+                        # Using cyclic symmetry
+                        key_i = str(a) + str(c) + str(d) + str(b)
+                        key_ii = str(a) + str(d) + str(b) + str(c)
+
+                        # Using other Riemann symmetries
+                        key_1 = str(b) + str(a) + str(c) + str(d)
+                        key_2 = str(a) + str(b) + str(d) + str(c)
+                        key_3 = str(c) + str(d) + str(a) + str(b)
+
+                        if key in self.riemann_dict:
+                            pass
+                        else:
+                            summation1 = 0
+                            summation2 = 0
+                            for k in range(self.num_coordinates):
+                                summation1 += self.christoffel_fk[str(a) + str(d) + str(k)]*self.christoffel_sk[k][b,c]
+
+                                summation2 += self.christoffel_fk[str(a) + str(c) + str(k)]*self.christoffel_sk[k][b,d]
+
+                            ans = self.christoffel_fk[str(b) + str(d) + str(a)].diff(self.coordinate_list[c]) - self.christoffel_fk[str(b) + str(c) + str(a)].diff(self.coordinate_list[d]) + summation1 - summation2
+
+
+                            self.riemann_dict[key] = sym.simplify(ans)
+                            self.riemann_dict[key_1] = -sym.simplify(ans)
+                            self.riemann_dict[key_2] = -sym.simplify(ans)
+                            self.riemann_dict[key_3] = sym.simplify(ans)
+
+                            if key_i in self.riemann_dict:
+                                self.riemann_dict[key_ii] = -(ans + self.riemann_dict[key_i])
+
+                            if key_ii in self.riemann_dict:
+                                self.riemann_dict[key_i] = -(ans + self.riemann_dict[key_ii])
+                    
+                            
+                            if ans != 0:
+                                self.riemann_dict[str(a)+str(b)+str(c)+str(d)] = sym.simplify(ans)
 
         if show_tensor:    
             for key in self.riemann_dict:
                 R = sym.symbols(f'R_{key}')
                 ans = self.riemann_dict[key]
-                display(Math(sym.latex(R) + ' = ' + sym.latex(ans)))
+                if ans != 0:
+                    display(Math(sym.latex(R) + ' = ' + sym.latex(ans)))
     
     def calculate_ricci_tensor(self, show_tensor=True):
         """
@@ -436,7 +477,7 @@ class PyCSC:
 
         
         # Check pre-requisites
-        if self.riemann_dict == {}:
+        if self.riemann_dict is None:
             raise ValueError(
                 'Please calculate the Riemannian Tensor first before calculating' +
                 ' the Ricci Tensor.'
@@ -454,10 +495,10 @@ class PyCSC:
             for b in range(self.num_coordinates):
 
                 summation = 0
-                for k in range(self.num_coordinates):
-                    string = str(k)+str(a)+str(k)+str(b)
-                    if string in self.riemann_dict:
-                        summation += self.riemann_dict[string]
+                for m in range(self.num_coordinates):
+                    for n in range(self.num_coordinates):
+                        key = str(m) + str(a) + str(n) + str(b)
+                        summation += self.contra_metric[m,n]*self.riemann_dict[key]
         
                 self.ricci_tensor[a,b] = sym.simplify(summation)
 
@@ -520,7 +561,8 @@ class PyCSC:
 
         Returns
         -------
-            None
+            einstein_tensor :: `sympy.matrices.dense.MutableDenseMatrix`
+              Einstein Tensor
         
         """
 
@@ -544,3 +586,5 @@ class PyCSC:
         if show_tensor:
             G = sym.symbols(f'G_mu_nu')
             display(Math(sym.latex(G) + ' = ' + sym.latex(einstein_tensor)))
+        
+        return einstein_tensor
