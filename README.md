@@ -45,9 +45,7 @@ python setup.py install
 - Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
 - Need to update css to fit large metric tensors. (both in results and input metric tensors)
 - Software calculates sends 0 components of the Riemann tensor
-- Warning symbol to use python mathematical operators.
 - What is a user uses delta instead of alpha
-- Change design according to onlyCS option.
 
 ## Roadmap
 
