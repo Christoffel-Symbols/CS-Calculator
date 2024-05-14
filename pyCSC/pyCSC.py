@@ -398,59 +398,30 @@ class PyCSC:
                 + ' the Riemann Tensor.'
             )
         
-        if self.christoffel_fk is None:
-            raise ValueError(
-                'Please calculate Christoffel symbols of first kind before calculatint' + 'the Riemann Tensor.'
-            )
-        
         self.riemann_dict = dict()
         
         for a in range(self.num_coordinates):
             for b in range(self.num_coordinates):
                 for c in range(self.num_coordinates):
                     for d in range(self.num_coordinates):
-                        key = str(a) + str(b) + str(c) + str(d)
 
-                        # Using cyclic symmetry
-                        key_i = str(a) + str(c) + str(d) + str(b)
-                        key_ii = str(a) + str(d) + str(b) + str(c)
-
-                        # Using other Riemann symmetries
-                        key_1 = str(b) + str(a) + str(c) + str(d)
-                        key_2 = str(a) + str(b) + str(d) + str(c)
-                        key_3 = str(c) + str(d) + str(a) + str(b)
-
-                        if key in self.riemann_dict:
-                            pass
-                        else:
-                            summation1 = 0
-                            summation2 = 0
-                            for k in range(self.num_coordinates):
-                                summation1 += self.christoffel_fk[str(a) + str(d) + str(k)]*self.christoffel_sk[k][b,c]
-
-                                summation2 += self.christoffel_fk[str(a) + str(c) + str(k)]*self.christoffel_sk[k][b,d]
-
-                            ans = self.christoffel_fk[str(b) + str(d) + str(a)].diff(self.coordinate_list[c]) - self.christoffel_fk[str(b) + str(c) + str(a)].diff(self.coordinate_list[d]) + summation1 - summation2
-
-
-                            self.riemann_dict[key] = sym.simplify(ans)
-                            self.riemann_dict[key_1] = -sym.simplify(ans)
-                            self.riemann_dict[key_2] = -sym.simplify(ans)
-                            self.riemann_dict[key_3] = sym.simplify(ans)
-
-                            if key_i in self.riemann_dict:
-                                self.riemann_dict[key_ii] = -(ans + self.riemann_dict[key_i])
-
-                            if key_ii in self.riemann_dict:
-                                self.riemann_dict[key_i] = -(ans + self.riemann_dict[key_ii])
-                    
+                        key = str(a)+str(b)+str(c)+str(d)
+                        
+                        summation1 = 0
+                        summation2 = 0
+                        
+                        for k in range(self.num_coordinates):
+                            summation1 += self.christoffel_sk[a][c,k]*self.christoffel_sk[k][d,b]
+                            summation2 += self.christoffel_sk[a][d,k]*self.christoffel_sk[k][c,b]
                             
-                            if ans != 0:
-                                self.riemann_dict[str(a)+str(b)+str(c)+str(d)] = sym.simplify(ans)
+                            ans = self.christoffel_sk[a][d,b].diff(self.coordinate_list[c]) - self.christoffel_sk[a][c,b].diff(self.coordinate_list[d]) + summation1 - summation2
+                            
+                        if ans != 0:
+                                self.riemann_dict[key] = sym.simplify(ans)
 
         if show_tensor:    
             for key in self.riemann_dict:
-                R = sym.symbols(f'R_{key}')
+                R = sym.symbols(f'R^{key[0]}_{key[1:]}')
                 ans = self.riemann_dict[key]
                 if ans != 0:
                     display(Math(sym.latex(R) + ' = ' + sym.latex(ans)))
@@ -495,10 +466,10 @@ class PyCSC:
             for b in range(self.num_coordinates):
 
                 summation = 0
-                for m in range(self.num_coordinates):
-                    for n in range(self.num_coordinates):
-                        key = str(m) + str(a) + str(n) + str(b)
-                        summation += self.contra_metric[m,n]*self.riemann_dict[key]
+                for k in range(self.num_coordinates):
+                    string = str(k)+str(a)+str(k)+str(b)
+                    if string in self.riemann_dict:
+                        summation += self.riemann_dict[string]
         
                 self.ricci_tensor[a,b] = sym.simplify(summation)
 
