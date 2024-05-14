@@ -54,7 +54,7 @@ class PyCSC:
             
             metric :: `sympy.matrices.dense.MutableDenseMatrix`
               Metric tensor used for computing Christoffel Symbols. Components can 
-              consist of variable and constant parameters, and the scale factor a(t).
+              consist of variable and constant parameters.
               
             contra_metric :: `sympy.matrices.dense.MutableDenseMatrix`
               Inverse of the Metric tensor.
@@ -115,7 +115,7 @@ class PyCSC:
         self.ricci_tensor = None
         self.ricci_scalar = 0
 
-    def metric_tensor(self, matrix, variable_values={}, scale_factor=False, pressure=False, density=False):
+    def metric_tensor(self, matrix, variable_values={}):
         """
         Metric tensor.
 
@@ -128,21 +128,11 @@ class PyCSC:
             variable_values :: dict()
               Variable parameters that will be substituted into the ,metric tensor before calculating christoffel symbols.
 
-            scale_factor :: Boolean
-              If True, reserve 'a' `sympy.core.symbols.Symbol` for scale factor a(t).
-
-            pressure :: Boolean
-              If True, reserve 'p' `sympy.core.symbols.Symbol` for pressure as a function of time p(t).
-
-            density :: Boolean
-              If True, reserve 'P' `sympy.core.symbols.Symbol` for density as a function of time P(t).
-            
-
         Attributes
         ----------
             metric :: `sympy.matrices.dense.MutableDenseMatrix`
               Metric tensor used for computing Christoffel Symbols. Components can 
-              consist of variable and constant parameters, and the scale factor a(t).
+              consist of variable and constant parameters.
 
             variables_dict :: dict
               Mapping variable parameters (i.e., alpha, delta, epsilon) to the values
@@ -169,21 +159,6 @@ class PyCSC:
         else:
             raise TypeError(
                 'matrix must be an n-dimensional list inside a str'
-            )
-            
-        if not isinstance(scale_factor, bool):
-            raise TypeError(
-                'scale_factor must be a boolean type (i.e., True or False)'
-            )
-        
-        if not isinstance(pressure, bool):
-            raise TypeError(
-                'pressure must be a boolean type (i.e., True or False)'
-            )
-        
-        if not isinstance(density, bool):
-            raise TypeError(
-                'density must be a boolean type (i.e., True or False)'
             )
 
         allowed_keys = ['alpha', 'delta', 'epsilon']
@@ -213,25 +188,6 @@ class PyCSC:
                         raise ValueError(
                             "Value for each key in the parameter 'variable_values' cannot be an empty string."
                         )        
-
-        if scale_factor:
-            # this is responsible to visualize time derivatives with dots
-            init_vprinting()
-            
-            # then you need to define x as a functions of time
-            t = sym.symbols("t")
-            a = Function("a")(t)
-            self.variables_dict['a'] = a
-        
-        if pressure:
-            t = sym.symbols("t")
-            p = Function("p")(t)
-            self.variables_dict['p'] = p
-
-        if density:
-            t = sym.symbols("t")
-            P = Function("P")(t)
-            self.variables_dict['P'] = P
                  
         # substitute variables' definition into the metric tensor
         if 'alpha' in variable_values.keys():
@@ -509,6 +465,8 @@ class PyCSC:
             raise ValueError(
                 'Please calculate Ricci Tensor before calculating the Ricci scalar.'
             )
+        
+        self.ricci_scalar = 0
 
         for k in range(self.num_coordinates):
             for m in range(self.num_coordinates):
