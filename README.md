@@ -43,7 +43,6 @@ python setup.py install
 ## Known Issues
 
 - Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
-- Change the condition because sometimes the returned Riemann tensor is zero but the user had requested + Tensors.
 
 ## Roadmap
 
