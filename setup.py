@@ -52,7 +52,7 @@ setup(
     packages=[
         "pyCSC"
     ],
-    install_requires=["sympy"],
+    install_requires=["sympy","IPython"],
     license="GPLv3",
     python_requies=">=3.9",
     platforms=["MacOS"] # Tested on MacOS. Windows and linux likely okay.
