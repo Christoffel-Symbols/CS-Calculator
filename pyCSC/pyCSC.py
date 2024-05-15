@@ -152,7 +152,7 @@ class PyCSC:
            if Matrix(sym.parsing.sympy_parser.parse_expr(matrix)).shape == (self.num_coordinates,self.num_coordinates):
                self.metric = sym.parsing.sympy_parser.parse_expr(matrix, locals())
            else:
-               raise ValueError(
+               raise Exception(
                    f" `matrix` shape must be ({self.num_coordinates},{self.num_coordinates})"
                )
 
@@ -246,7 +246,7 @@ class PyCSC:
 
         # Check if the metric is there or not
         if self.metric == None:
-            raise ValueError(
+            raise Exception(
                 'Please specify the metric tensor using `PyCSC.metric_tensor()`' +
                 ' before calculating Christoffel Symbols of first kind.'
             )
@@ -288,7 +288,7 @@ class PyCSC:
 
         # Check pre-requisites
         if self.metric == None:
-            raise ValueError(
+            raise Exception(
                 'Please specify the metric tensor using `PyCSC.metric_tensor()`' +
                 ' before calculating Christoffel Symbols of first kind.'
             )
@@ -349,7 +349,7 @@ class PyCSC:
 
         # check prerequisites
         if self.christoffel_sk == []:
-            raise ValueError(
+            raise Exception(
                 'Please calculate Christoffel symbols of second kind before calculating'
                 + ' the Riemann Tensor.'
             )
@@ -405,7 +405,7 @@ class PyCSC:
         
         # Check pre-requisites
         if self.riemann_dict is None:
-            raise ValueError(
+            raise Exception(
                 'Please calculate the Riemannian Tensor first before calculating' +
                 ' the Ricci Tensor.'
             )
@@ -462,7 +462,7 @@ class PyCSC:
 
         # prerequisites
         if self.ricci_tensor == None:
-            raise ValueError(
+            raise Exception(
                 'Please calculate Ricci Tensor before calculating the Ricci scalar.'
             )
         
@@ -501,7 +501,7 @@ class PyCSC:
             )
 
         if self.ricci_scalar == None:
-            raise ValueError(
+            raise Exception(
                 'Please calculate Ricci scalar before calculating the Einstein Tensor.'
             )
         
