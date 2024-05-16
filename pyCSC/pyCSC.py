@@ -256,7 +256,7 @@ class PyCSC:
         for a in range(self.num_coordinates):
             for b in range(self.num_coordinates):
                 for c in range(self.num_coordinates):
-                    ans = (1/2) * (self.metric[a,c].diff(self.coordinate_list[b]) + self.metric[b,c].diff(self.coordinate_list[a]) - self.metric[b,a].diff(self.coordinate_list[c]))
+                    ans = (1/2) * (self.metric[a,c].diff(self.coordinate_list[b]) - self.metric[b,c].diff(self.coordinate_list[a]) + self.metric[b,a].diff(self.coordinate_list[c]))
                     self.christoffel_fk[str(a) + str(b) + str(c)] = sym.simplify(ans)
 
         if show_symbols:    
