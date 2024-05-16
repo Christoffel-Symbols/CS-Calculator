@@ -109,11 +109,11 @@ class PyCSC:
         self.contra_metric = None
 
         # Intializing the output
-        self.christoffel_sk = []
+        self.christoffel_sk = None
         self.riemann_dict = None
         self.christoffel_fk = None
         self.ricci_tensor = None
-        self.ricci_scalar = 0
+        self.ricci_scalar = None
 
     def metric_tensor(self, matrix, variable_values={}):
         """
@@ -152,7 +152,7 @@ class PyCSC:
            if Matrix(sym.parsing.sympy_parser.parse_expr(matrix)).shape == (self.num_coordinates,self.num_coordinates):
                self.metric = sym.parsing.sympy_parser.parse_expr(matrix, locals())
            else:
-               raise Exception(
+               raise ValueError(
                    f" `matrix` shape must be ({self.num_coordinates},{self.num_coordinates})"
                )
 
@@ -245,7 +245,7 @@ class PyCSC:
             )
 
         # Check if the metric is there or not
-        if self.metric == None:
+        if self.metric is None:
             raise Exception(
                 'Please specify the metric tensor using `PyCSC.metric_tensor()`' +
                 ' before calculating Christoffel Symbols of first kind.'
@@ -287,7 +287,7 @@ class PyCSC:
         """
 
         # Check pre-requisites
-        if self.metric == None:
+        if self.metric is None:
             raise Exception(
                 'Please specify the metric tensor using `PyCSC.metric_tensor()`' +
                 ' before calculating Christoffel Symbols of first kind.'
@@ -299,6 +299,7 @@ class PyCSC:
                 'show_symbols can either be True or False.'
             )
 
+        self.christoffel_sk = []
         # Create a list of Christoffel symbols matrices full of zeros
         it = 0 
         while it < self.num_coordinates:
@@ -348,7 +349,7 @@ class PyCSC:
             )
 
         # check prerequisites
-        if self.christoffel_sk == []:
+        if self.christoffel_sk is None:
             raise Exception(
                 'Please calculate Christoffel symbols of second kind before calculating'
                 + ' the Riemann Tensor.'
@@ -406,7 +407,7 @@ class PyCSC:
         # Check pre-requisites
         if self.riemann_dict is None:
             raise Exception(
-                'Please calculate the Riemannian Tensor first before calculating' +
+                'Please calculate the Riemann Tensor before calculating' +
                 ' the Ricci Tensor.'
             )
     
@@ -461,11 +462,11 @@ class PyCSC:
             )
 
         # prerequisites
-        if self.ricci_tensor == None:
+        if self.ricci_tensor is None:
             raise Exception(
                 'Please calculate Ricci Tensor before calculating the Ricci scalar.'
             )
-        
+
         self.ricci_scalar = 0
 
         for k in range(self.num_coordinates):
@@ -500,9 +501,9 @@ class PyCSC:
                 'show_tensor can either be True or False'
             )
 
-        if self.ricci_scalar == None:
+        if self.ricci_scalar is None:
             raise Exception(
-                'Please calculate Ricci scalar before calculating the Einstein Tensor.'
+                'Please calculate Ricci scalar before calculating Einstein Tensor.'
             )
         
         einstein_tensor = sym.zeros(self.num_coordinates, self.num_coordinates)
