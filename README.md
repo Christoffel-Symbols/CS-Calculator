@@ -51,9 +51,9 @@ Here are some future plans for the Christoffel Symbols Calculator:
 
 - Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
 - Develop python app further by including Weyl Tensor, Electromagnetic Tensor and visualization of geodesics, and etcetera.
-- Flask caching depending (maybe on redis) on how popular the app gets.
-- covariant and contravariant bifurcation option for each tensor.
-- Exploiting tensor symmetries to decrease calculation time and app efficiency
+- Integrate Flask caching depending (maybe on redis) on how popular the app gets.
+- Add covariant and contravariant bifurcation option for each tensor.
+- Exploiting tensor symmetries to decrease calculation time and increase app efficiency
 
 ## Questions
 
