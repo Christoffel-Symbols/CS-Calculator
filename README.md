@@ -42,13 +42,18 @@ python setup.py install
 
 ## Known Issues
 
-- Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
+- Ricci tensor calculated from first kind Riemann Tensor doesn't worl - this prevents the software from exploiting known tensor symmetries. 
+
 
 ## Roadmap
 
 Here are some future plans for the Christoffel Symbols Calculator:
 
-- Include electromagnetism tensor to describe electromagnetic field in spacetime.
+- Need to develop a parser that can render pythonnic mathematical expression to latex in real-time. This, in part, can be achieved using shunting yard algorithm.
+- Develop python app further by including Weyl Tensor, Electromagnetic Tensor and visualization of geodesics, and etcetera.
+- Flask caching depending (maybe on redis) on how popular the app gets.
+- covariant and contravariant bifurcation option for each tensor.
+- Exploiting tensor symmetries to decrease calculation time and app efficiency
 
 ## Questions
 
