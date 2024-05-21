@@ -433,10 +433,10 @@ class PyCSC:
                         summation += self.riemann_dict[string]
 
                 ans = sym.simplify(summation)
+                self.ricci_tensor[a,b] = ans
                 if a==b:
                     pass
                 else:
-                    self.ricci_tensor[a,b] = ans
                     self.ricci_tensor[b,a] = ans
 
         if show_tensor:
@@ -520,10 +520,10 @@ class PyCSC:
         for a in range(self.num_coordinates):
             for b in range(a+1):
                 ans = sym.simplify(self.ricci_tensor[a,b] - (1/2)*self.metric[a,b]*self.ricci_scalar)
+                einstein_tensor[a,b] = ans
                 if a==b:
                     pass
                 else:
-                    einstein_tensor[a,b] = ans
                     einstein_tensor[b,a] = ans
 
         if show_tensor:
