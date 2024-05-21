@@ -255,7 +255,7 @@ class PyCSC:
 
         for a in range(self.num_coordinates):
             for b in range(self.num_coordinates):
-                for c in range(self.num_coordinates):
+                for c in range(b+1):
                     ans = (1/2) * (self.metric[a,c].diff(self.coordinate_list[b]) - self.metric[b,c].diff(self.coordinate_list[a]) + self.metric[b,a].diff(self.coordinate_list[c]))
                     self.christoffel_fk[str(a) + str(b) + str(c)] = sym.simplify(ans)
 
@@ -360,21 +360,25 @@ class PyCSC:
         for a in range(self.num_coordinates):
             for b in range(self.num_coordinates):
                 for c in range(self.num_coordinates):
-                    for d in range(self.num_coordinates):
-
+                    for d in range(c+1):
                         key = str(a)+str(b)+str(c)+str(d)
-                        
-                        summation1 = 0
-                        summation2 = 0
-                        
-                        for k in range(self.num_coordinates):
-                            summation1 += self.christoffel_sk[a][c,k]*self.christoffel_sk[k][d,b]
-                            summation2 += self.christoffel_sk[a][d,k]*self.christoffel_sk[k][c,b]
+                        key2 = str(a)+str(b)+str(d)+str(c)
+
+                        if key in self.riemann_dict:
+                            pass
+                        else:                        
+                            summation1 = 0
+                            summation2 = 0
                             
-                            ans = self.christoffel_sk[a][d,b].diff(self.coordinate_list[c]) - self.christoffel_sk[a][c,b].diff(self.coordinate_list[d]) + summation1 - summation2
-                            
-                        if ans != 0:
-                                self.riemann_dict[key] = sym.simplify(ans)
+                            for k in range(self.num_coordinates):
+                                summation1 += self.christoffel_sk[a][c,k]*self.christoffel_sk[k][d,b]
+                                summation2 += self.christoffel_sk[a][d,k]*self.christoffel_sk[k][c,b]
+                                
+                                ans = self.christoffel_sk[a][d,b].diff(self.coordinate_list[c]) - self.christoffel_sk[a][c,b].diff(self.coordinate_list[d]) + summation1 - summation2
+                                
+                                final_ans = sym.simplify(ans)
+                                self.riemann_dict[key] = final_ans
+                                self.riemann_dict[key2] = -final_ans
 
         if show_tensor:    
             for key in self.riemann_dict:
@@ -385,7 +389,7 @@ class PyCSC:
     
     def calculate_ricci_tensor(self, show_tensor=True):
         """
-        Calculate Ricci Tensor.
+        Calculate Ricci Tensor. It is a symmetric tensor with respect to its indices R_{ab} = R_{ba}.
 
         Parameters
         ----------
@@ -420,15 +424,20 @@ class PyCSC:
         self.ricci_tensor = sym.zeros(self.num_coordinates, self.num_coordinates)
 
         for a in range(self.num_coordinates):
-            for b in range(self.num_coordinates):
+            for b in range(a+1):
 
                 summation = 0
                 for k in range(self.num_coordinates):
                     string = str(k)+str(a)+str(k)+str(b)
                     if string in self.riemann_dict:
                         summation += self.riemann_dict[string]
-        
-                self.ricci_tensor[a,b] = sym.simplify(summation)
+
+                ans = sym.simplify(summation)
+                if a==b:
+                    pass
+                else:
+                    self.ricci_tensor[a,b] = ans
+                    self.ricci_tensor[b,a] = ans
 
         if show_tensor:
             R = sym.symbols(f'R_mu_nu')
@@ -478,7 +487,7 @@ class PyCSC:
     
     def calculate_einstein_tensor(self, show_tensor=True):
         """
-        Calculate Einstein Tensor.
+        Calculate Einstein Tensor. It is a symmetric tensor with respect to its indices. G_{ab} = G_{ba}
 
         Parameters
         ----------
@@ -509,9 +518,13 @@ class PyCSC:
         einstein_tensor = sym.zeros(self.num_coordinates, self.num_coordinates)
 
         for a in range(self.num_coordinates):
-            for b in range(self.num_coordinates):
-
-                einstein_tensor[a,b] = sym.simplify(self.ricci_tensor[a,b] - (1/2)*self.metric[a,b]*self.ricci_scalar)
+            for b in range(a+1):
+                ans = sym.simplify(self.ricci_tensor[a,b] - (1/2)*self.metric[a,b]*self.ricci_scalar)
+                if a==b:
+                    pass
+                else:
+                    einstein_tensor[a,b] = ans
+                    einstein_tensor[b,a] = ans
 
         if show_tensor:
             G = sym.symbols(f'G_mu_nu')
