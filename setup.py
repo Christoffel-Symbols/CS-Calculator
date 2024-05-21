@@ -55,5 +55,5 @@ setup(
     install_requires=["sympy","IPython"],
     license="GPLv3",
     python_requies=">=3.9",
-    platforms=["MacOS"] # Tested on MacOS. Windows and linux likely okay.
+    platforms=["Ubuntu"] # Tested on Ubuntu and MacOS. Windows likely okay.
 )
