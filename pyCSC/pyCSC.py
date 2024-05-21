@@ -428,9 +428,8 @@ class PyCSC:
 
                 summation = 0
                 for k in range(self.num_coordinates):
-                    string = str(k)+str(a)+str(k)+str(b)
-                    if string in self.riemann_dict:
-                        summation += self.riemann_dict[string]
+                    key = str(k)+str(a)+str(k)+str(b)
+                    summation += self.riemann_dict[key]
 
                 ans = sym.simplify(summation)
                 self.ricci_tensor[a,b] = ans
@@ -485,7 +484,7 @@ class PyCSC:
         if show_scalar:
             display(sym.simplify(self.ricci_scalar))
     
-    def calculate_einstein_tensor(self, show_tensor=True):
+    def calculate_einstein_tensor(self, show_tensor=False):
         """
         Calculate Einstein Tensor. It is a symmetric tensor with respect to its indices. G_{ab} = G_{ba}
 
