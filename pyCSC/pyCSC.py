@@ -6,12 +6,6 @@ Py-Christoffel Symbols Calculator
 import sympy as sym
 from sympy import init_printing
 from sympy import Matrix
-from sympy import sin, cos, csc, sec, tan, cot, asin, acsc, acos, asec, atan, acot, atan2, sinc
-from sympy import sinh, cosh, tanh, coth, sech, csch, asinh, acosh, atanh, acoth, asech, acsch
-from sympy import log, ln
-from sympy import E as e
-from sympy import Function
-from sympy.physics.mechanics import init_vprinting
 from IPython.display import display, Math
 init_printing()
 
@@ -28,25 +22,22 @@ class PyCSC:
     
     """
 
-    def __init__(self, num_coordinates):
+    def __init__(self, coordinates):
         """
         Create a PyCSC instance.
 
         Parameters
         ----------
-            num_coordinates :: int
-              Number of dimensions in the space-time (maximum 4 and minimum 2). 
-              Number of dimensions are 4: coordinates : [t,x,y,z]
-              Number of dimensions are 3: coordinates : [x,y,z]
-              Number of dimensions are 2: coordinates : [x,y]
+            coordinates  :: list
+              List of coordinates specified by the user.
 
         Attributes
         ----------
-            num_coorindates :: int
-              Number of coordinates in the space.
+            num_coordinates :: int
+              Number of dimensions in the space-time model. 
 
             coordinate_list :: list
-              List of coordinates according to `num_coordinates`.
+              List of coordinates according to `coordinates`.
             
             variables_dict :: dict
               Mapping variable parameters (i.e., alpha, delta, epsilon) to the values
@@ -81,27 +72,35 @@ class PyCSC:
         """
 
         # Check input
-        if isinstance(num_coordinates,int):
-            if (num_coordinates <= 4 and num_coordinates >= 2):
-                self.num_coordinates = num_coordinates
+        if isinstance(coordinates,list):
+            # Check for duplicates
+            if len(coordinates) != len(set(coordinates)):
+                raise ValueError(
+                    "Repeated coordinates not allowed."
+                )
+
+            for coord in coordinates:
+                if not isinstance(coord, str):
+                    raise ValueError(
+                        "coordinates parameter should be a list of coordinates with each coordinate represented as a string. For example, coordaintes = ['theta', 'phi']."
+                    )
+                
+            if (len(coordinates) <= 4 and len(coordinates) >= 2):
+                self.num_coordinates = len(coordinates)
             else:
                 raise ValueError(
-                    "Number of coordinates can be maximum 4 (1 time coordinate and 3 space coordinates, i.e., t,x,y,z) or minimum 2 (both space coordinates, i.e., x,y)"
+                    "Number of coordinates can be maximum 4 (1 time coordinate and 3 space coordinates, i.e., t,x,y,z) or minimum 2 (both space coordinates, i.e., x,y)."
                 )
         else:
             raise TypeError(
-                "num_coordinates must be an int"
+                "`coordinates` parameter must be a list of coordinates. For example, coordinates = ['r', 'theta', 'phi']."
             )
 
-        if num_coordinates == 2:
-            x,y = sym.symbols('x y')
-            self.coordinate_list = [x,y]
-        elif num_coordinates == 3:
-            x,y,z = sym.symbols('x y z')
-            self.coordinate_list = [x,y,z]
-        else:
-            t,x,y,z = sym.symbols('t x y z')
-            self.coordinate_list = [t,x,y,z]
+        symbols_string = ''
+        for coord in coordinates:
+            symbols_string += coord + ' '
+        
+        self.coordinate_list = sym.symbols(symbols_string)
 
         self.variables_dict = dict() 
 
@@ -257,7 +256,10 @@ class PyCSC:
             for b in range(self.num_coordinates):
                 for c in range(b+1):
                     ans = (1/2) * (self.metric[a,c].diff(self.coordinate_list[b]) - self.metric[b,c].diff(self.coordinate_list[a]) + self.metric[b,a].diff(self.coordinate_list[c]))
-                    self.christoffel_fk[str(a) + str(b) + str(c)] = sym.simplify(ans)
+                    try:
+                        self.christoffel_fk[str(a) + str(b) + str(c)] = sym.simplify(ans)
+                    except:
+                        self.christoffel_fk[str(a) + str(b) + str(c)] = ans
 
         if show_symbols:    
             for key in self.christoffel_fk:
@@ -376,7 +378,11 @@ class PyCSC:
                                 
                                 ans = self.christoffel_sk[a][d,b].diff(self.coordinate_list[c]) - self.christoffel_sk[a][c,b].diff(self.coordinate_list[d]) + summation1 - summation2
                                 
-                                final_ans = sym.simplify(ans)
+                                try:
+                                    final_ans = sym.simplify(ans)
+                                except:
+                                    final_ans = ans
+
                                 self.riemann_dict[key] = final_ans
                                 self.riemann_dict[key2] = -final_ans
 
@@ -431,7 +437,10 @@ class PyCSC:
                     key = str(k)+str(a)+str(k)+str(b)
                     summation += self.riemann_dict[key]
 
-                ans = sym.simplify(summation)
+                try:
+                    ans = sym.simplify(summation)
+                except:
+                    ans = summation
                 self.ricci_tensor[a,b] = ans
                 if a==b:
                     pass
@@ -482,7 +491,10 @@ class PyCSC:
                 self.ricci_scalar += self.contra_metric[k,m] * self.ricci_tensor[k,m]
 
         if show_scalar:
-            display(sym.simplify(self.ricci_scalar))
+            try:
+                display(sym.simplify(self.ricci_scalar))
+            except:
+                display(self.ricci_scalar)
     
     def calculate_einstein_tensor(self, show_tensor=False):
         """
@@ -518,7 +530,10 @@ class PyCSC:
 
         for a in range(self.num_coordinates):
             for b in range(a+1):
-                ans = sym.simplify(self.ricci_tensor[a,b] - (1/2)*self.metric[a,b]*self.ricci_scalar)
+                try:
+                    ans = sym.simplify(self.ricci_tensor[a,b] - (1/2)*self.metric[a,b]*self.ricci_scalar)
+                except:
+                    ans = self.ricci_tensor[a,b] - (1/2)*self.metric[a,b]*self.ricci_scalar
                 einstein_tensor[a,b] = ans
                 if a==b:
                     pass
