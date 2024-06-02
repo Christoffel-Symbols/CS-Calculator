@@ -229,7 +229,7 @@ class RiemannTensor:
                                 summation1 += christoffel_sk[a][c,k]*christoffel_sk[k][d,b]
                                 summation2 += christoffel_sk[a][d,k]*christoffel_sk[k][c,b]
                                 
-                                ans = sym.diff(christoffel_sk[a][d,b],coordinate_list[c]) - sym.diff(christoffel_sk[a][c,b],coordinate_list[d]) + summation1 - summation2
+                            ans = sym.diff(christoffel_sk[a][d,b],coordinate_list[c]) - sym.diff(christoffel_sk[a][c,b],coordinate_list[d]) + summation1 - summation2
                                 
                             if simplify:
                                 try:

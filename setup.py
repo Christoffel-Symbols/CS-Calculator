@@ -43,7 +43,7 @@ long_description = __doc__.strip()
 
 setup(
     name="PyCSC",
-    version="2.1.3",
+    version="2.1.4",
     description=long_description,
     url="https://github.com/Christoffel-Symbols/Christoffel-Symbols-Calculator",
     author="Dhananjhay Bansal",
