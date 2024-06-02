@@ -214,9 +214,9 @@ class RiemannTensor:
             self.cleaner_riemann_sk = dict()
 
             # Calculating using Christoffel symbols.
-            for a in range(self.MetricTensorObj.num_coordinates):
-                for b in range(self.MetricTensorObj.num_coordinates):
-                    for c in range(self.MetricTensorObj.num_coordinates):
+            for a in range(self.PyCSCObj.num_coordinates):
+                for b in range(self.PyCSCObj.num_coordinates):
+                    for c in range(self.PyCSCObj.num_coordinates):
                         for d in range(c+1):
                             
                             key = str(a)+str(b)+str(c)+str(d)
@@ -225,7 +225,7 @@ class RiemannTensor:
                             summation1 = 0
                             summation2 = 0
                             
-                            for k in range(self.MetricTensorObj.num_coordinates):
+                            for k in range(self.PyCSCObj.num_coordinates):
                                 summation1 += christoffel_sk[a][c,k]*christoffel_sk[k][d,b]
                                 summation2 += christoffel_sk[a][d,k]*christoffel_sk[k][c,b]
                                 
