@@ -118,12 +118,12 @@ class MetricTensor:
             epsilon = sym.Symbol('epsilon')
             variables_dict[epsilon] = parse_expr(variable_values['epsilon'], local_dict=locals())
 
-        for i in range(self.PyCSCObj.num_coordinates):
-            for j in range(self.PyCSCObj.num_coordinates):
-                if self.tensor[i][j] != 0:
+        for dummy_index1 in range(self.PyCSCObj.num_coordinates):
+            for dummy_index2 in range(self.PyCSCObj.num_coordinates):
+                if self.tensor[dummy_index1][dummy_index2] != 0:
                     try:
                         # Need to parse it again when doing non-notebook local development
-                        self.tensor[i][j] = parse_expr(self.tensor[i][j], local_dict=locals()).subs(variables_dict)
+                        self.tensor[dummy_index1][dummy_index2] = parse_expr(self.tensor[dummy_index1][dummy_index2], local_dict=locals()).subs(variables_dict)
                     except:
                         raise Exception(
                             "Could not substitute variable values" + "into the metric"
